@@ -12,7 +12,7 @@
   },
   "source": {
     "protectedPaths": ["docs", "starter", "fixture", "runtime", "scripts", "tests/public", "tools", "userspace", "hardware", "provenance"],
-    "baselineTag": "interrupt-event-recorder-v1.0.0"
+    "baselineTag": "interrupt-event-recorder-v1.0.1"
   },
   "validation": {
     "commands": [

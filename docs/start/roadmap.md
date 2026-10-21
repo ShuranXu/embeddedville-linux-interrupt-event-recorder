@@ -97,10 +97,10 @@ driver to physical hardware only after the emulator evidence passes.
 ## Execution choices
 
 [Set up and run QEMU](environment.md#launch-a-guided-lab){ .md-button .md-button--primary }
-[Open the pinned Codespace](https://codespaces.new/ShuranXu/embeddedville-linux-interrupt-event-recorder/tree/interrupt-event-recorder-v1.0.0?quickstart=1){ .md-button }
+[Open the pinned Codespace](https://codespaces.new/ShuranXu/embeddedville-linux-interrupt-event-recorder/tree/interrupt-event-recorder-v1.0.1?quickstart=1){ .md-button }
 [Open Lab 1](../labs/01-target.md){ .md-button }
 
-The Codespaces link opens or resumes the immutable `interrupt-event-recorder-v1.0.0`
+The Codespaces link opens or resumes the immutable `interrupt-event-recorder-v1.0.1`
 course workspace. QEMU runs with software TCG, so no physical board or nested
 virtualization is required.
 
