@@ -2,7 +2,7 @@
 
 <div class="lab-launch" markdown>
 [Run Lab 4 in QEMU](../start/environment.md#launch-a-guided-lab){ .md-button .md-button--primary }
-[Open Codespaces](https://codespaces.new/ShuranXu/embeddedville-linux-interrupt-event-recorder/tree/interrupt-event-recorder-v1.0.0?quickstart=1){ .md-button }
+[Open Codespaces](https://codespaces.new/ShuranXu/embeddedville-linux-interrupt-event-recorder/tree/interrupt-event-recorder-v1.0.1?quickstart=1){ .md-button }
 </div>
 
 <p class="lab-launch-note"><strong>Workspace command:</strong> <code>./lab run lab4</code>. The Codespaces button opens or resumes the pinned course workspace.</p>

@@ -62,7 +62,7 @@ headers again. Do not build against headers for a different `uname -r`.
 Clone the tagged public course on the Pi. The remaining commands assume:
 
 ```console
-git clone --branch interrupt-event-recorder-v1.0.0 --depth 1 \
+git clone --branch interrupt-event-recorder-v1.0.1 --depth 1 \
   https://github.com/ShuranXu/embeddedville-linux-interrupt-event-recorder.git
 cd embeddedville-linux-interrupt-event-recorder
 ```

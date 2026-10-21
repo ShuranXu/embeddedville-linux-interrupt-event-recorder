@@ -2,7 +2,11 @@
 #ifndef IRQREC_UAPI_H
 #define IRQREC_UAPI_H
 
+#ifdef __KERNEL__
 #include <linux/ioctl.h>
+#else
+#include <sys/ioctl.h>
+#endif
 #include <linux/types.h>
 
 #define IRQREC_ABI_VERSION 1U
