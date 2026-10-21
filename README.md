@@ -28,6 +28,7 @@ the command shown in each lab. The complete public workflow is:
 ./lab run lab4
 ./lab run lab5
 ./lab test capstone
+./lab submit --activity irqrec-capstone
 ./lab reset
 ```
 

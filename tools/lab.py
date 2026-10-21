@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -9,6 +10,8 @@ import signal
 import subprocess
 import sys
 import time
+import urllib.request
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = json.loads((ROOT / "release-lock.json").read_text())
@@ -101,6 +104,90 @@ def reset(_: argparse.Namespace) -> None:
     shutil.rmtree(STATE, ignore_errors=True)
     print("reset: generated build and guest state removed; source and evidence preserved")
 
+def submission_snapshot() -> tuple[Path, dict[str, object], str, str]:
+    mapping = {
+        "starter/src/irqrec.c": "src/irqrec.c",
+        "starter/include/irqrec_uapi.h": "include/irqrec_uapi.h",
+        "Makefile": "Makefile",
+    }
+    files = []
+    for source, archive_path in mapping.items():
+        data = (ROOT / source).read_bytes()
+        files.append({"path": archive_path, "bytes": len(data),
+                      "sha256": hashlib.sha256(data).hexdigest(), "type": "file"})
+    manifest = {"schemaVersion": 1, "files": files}
+    canonical = json.dumps(manifest, separators=(",", ":"), sort_keys=True).encode()
+    evidence = ROOT / "evidence"
+    evidence.mkdir(exist_ok=True)
+    output = evidence / "irqrec-capstone-submission.zip"
+    with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+        for source, archive_path in mapping.items():
+            info = zipfile.ZipInfo(archive_path, (1980, 1, 1, 0, 0, 0))
+            info.external_attr = 0o100644 << 16
+            archive.writestr(info, (ROOT / source).read_bytes())
+    return output, manifest, hashlib.sha256(canonical).hexdigest(), hashlib.sha256(output.read_bytes()).hexdigest()
+
+def post_json(url: str, payload: dict[str, object], token: str | None = None) -> dict[str, object]:
+    headers = {"Content-Type": "application/json"}
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    request = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers, method="POST")
+    with urllib.request.urlopen(request, timeout=30) as response:
+        return json.load(response)
+
+def submit(args: argparse.Namespace) -> None:
+    if args.activity != "irqrec-capstone":
+        raise SystemExit("only --activity irqrec-capstone is submitted; guided labs are formative")
+    output, manifest, manifest_digest, snapshot_digest = submission_snapshot()
+    origin = os.environ.get("EMBEDDEDVILLE_ORIGIN", "https://embeddedville.com")
+    session = post_json(origin + "/api/workspace-submission-sessions", {
+        "courseId": "linux-interrupt-event-recorder",
+        "activityId": "irqrec-capstone",
+        "repository": "ShuranXu/embeddedville-linux-interrupt-event-recorder",
+        "starterVersion": "interrupt-event-recorder-v1.0.0",
+        "baseRef": "interrupt-event-recorder-v1.0.0",
+        "headCommit": None,
+        "dirty": True,
+        "manifestSha256": manifest_digest,
+        "snapshotSha256": snapshot_digest,
+        "snapshotBytes": output.stat().st_size,
+    })
+    print("Approve this exact snapshot:", session["verificationUri"])
+    while True:
+        request = urllib.request.Request(
+            origin + f"/api/workspace-submission-sessions/{session['id']}/status",
+            headers={"Authorization": "Bearer " + str(session["pollToken"])},
+        )
+        with urllib.request.urlopen(request, timeout=30) as response:
+            status = json.load(response)["status"]
+        if status == "approved":
+            break
+        if status in {"denied", "expired", "consumed"}:
+            raise SystemExit("pairing " + status)
+        time.sleep(2)
+    exchanged = post_json(
+        origin + f"/api/workspace-submission-sessions/{session['id']}/exchange",
+        {}, str(session["pollToken"]),
+    )
+    boundary = "----embeddedville-irqrec-boundary"
+    body = (
+        f"--{boundary}\r\nContent-Disposition: form-data; name=\"manifest\"\r\n\r\n"
+        f"{json.dumps(manifest, separators=(',', ':'), sort_keys=True)}\r\n"
+        f"--{boundary}\r\nContent-Disposition: form-data; name=\"snapshot\"; "
+        f"filename=\"{output.name}\"\r\nContent-Type: application/zip\r\n\r\n"
+    ).encode() + output.read_bytes() + f"\r\n--{boundary}--\r\n".encode()
+    request = urllib.request.Request(
+        origin + f"/api/workspace-submission-sessions/{session['id']}/submit",
+        data=body,
+        headers={
+            "Authorization": "Bearer " + str(exchanged["submissionToken"]),
+            "Content-Type": "multipart/form-data; boundary=" + boundary,
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=60) as response:
+        print(json.dumps(json.load(response), indent=2))
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="./lab")
     sub = parser.add_subparsers(required=True)
@@ -110,6 +197,9 @@ def main() -> None:
         if name in {"run", "test"}:
             command.add_argument("activity", nargs="?")
         command.set_defaults(function=function)
+    submit_command = sub.add_parser("submit")
+    submit_command.add_argument("--activity", required=True)
+    submit_command.set_defaults(function=submit)
     args = parser.parse_args()
     args.function(args)
 

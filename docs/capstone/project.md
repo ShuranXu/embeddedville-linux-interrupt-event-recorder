@@ -47,6 +47,21 @@ and debounce counts plus per-open delivery and drop counts.
 4. A short engineering note defending lock ownership, overflow policy, ABI
    compatibility, and teardown order.
 
+## Submit for EmbeddedVille completion
+
+After the public QEMU checks pass, create a one-time snapshot from the supported
+workspace:
+
+```console
+./lab submit --activity irqrec-capstone
+```
+
+Open the displayed verification URL, confirm the exact course, starter tag,
+and SHA-256 digest, then approve the transfer. The command includes only the
+driver source, UAPI header, and public build contract. The protected evaluator
+runs separately and never ships its reference driver or hidden scenarios to the
+workspace.
+
 ## Deliberate exclusions
 
 Do not add networking, a database, a graphical dashboard, power management,
