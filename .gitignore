@@ -1,0 +1,15 @@
+.lab-state/
+.venv/
+build/
+evidence/runtime/
+site/
+*.ko
+*.mod
+*.mod.c
+*.o
+*.order
+*.symvers
+.*.cmd
+modules.order
+Module.symvers
+

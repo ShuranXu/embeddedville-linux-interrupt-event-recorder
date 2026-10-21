@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "contractVersion": "2026.10-linux-interrupt-event-recorder-v1",
+  "courseId": "linux-interrupt-event-recorder",
+  "starterVersion": "interrupt-event-recorder-v1.0.0",
+  "baseImage": "ubuntu:24.04@sha256:a2d43bffc46670d7108bb3c0468c67c5557c4c92e83e1e34cbff1322ad1b94dc",
+  "toolchainImageDigest": "sha256:a09add7465bf3650be6f1c68d9d66e5b6670a891ced1898d649cf0584005e13e",
+  "sources": {
+    "linux": {"version": "6.18.57", "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.57.tar.xz", "sha256": "5bd9acdc82ec5efc3790ae840e5aaa40dfde7efff261cf6dde902dc570acf98c"},
+    "qemu": {"version": "11.1.2", "url": "https://download.qemu.org/qemu-11.1.2.tar.xz", "sha256": "731b5681e4bb18be313231579b8efd0296c5b015fa36dc533874b639ba838016"},
+    "busybox": {"version": "1.37.0", "url": "https://busybox.net/downloads/busybox-1.37.0.tar.bz2", "sha256": "3311dff32e746499f4df0d5df04d7eb396382d7e108bb9250e7b519b837043a4"},
+    "dropbear": {"version": "2026.94", "url": "https://matt.ucc.asn.au/dropbear/releases/dropbear-2026.94.tar.bz2", "sha256": "e098034a843699200c8c977a991fff73159735bf795d5f72ef672c41a6b1ae81"}
+  },
+  "runtime": {"acceleration": "tcg", "cpu": "max,la57=off", "sshBind": "127.0.0.1", "sshPort": 2222, "kernelRoot": "/opt/embeddedville/linux-6.18.57"}
+}
+

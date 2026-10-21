@@ -1,0 +1,71 @@
+site_name: Linux Interrupt Driver Project
+site_description: Build a production-style GPIO interrupt event recorder in Linux 6.18 under QEMU.
+site_url: https://shuranxu.github.io/embeddedville-linux-interrupt-event-recorder/
+repo_url: https://github.com/ShuranXu/embeddedville-linux-interrupt-event-recorder
+repo_name: ShuranXu/embeddedville-linux-interrupt-event-recorder
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - content.tabs.link
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+extra_css:
+  - assets/stylesheets/extra.css
+nav:
+  - Course home: index.md
+  - Start here:
+      - Project roadmap: start/roadmap.md
+      - Environment and workflow: start/environment.md
+      - Architecture evidence: start/architecture.md
+  - Project stage 1 - Driver boundaries:
+      - Required briefing: modules/01-driver-boundaries.md
+      - Knowledge recap: recaps/01-driver-boundaries.md
+  - Project stage 2 - Devices and GPIO:
+      - Required briefing: modules/02-platform-gpio.md
+      - Knowledge recap: recaps/02-platform-gpio.md
+  - Project stage 3 - Interrupts and time:
+      - Required briefing: modules/03-threaded-irq.md
+      - Knowledge recap: recaps/03-threaded-irq.md
+  - Project stage 4 - Event ABI:
+      - Required briefing: modules/04-event-abi.md
+      - Knowledge recap: recaps/04-event-abi.md
+  - Project stage 5 - Lifecycle quality:
+      - Required briefing: modules/05-lifecycle-quality.md
+      - Knowledge recap: recaps/05-lifecycle-quality.md
+  - Guided labs:
+      - Lab 1 - Inspect the target: labs/01-target.md
+      - Lab 2 - Bind a platform device: labs/02-platform.md
+      - Lab 3 - Capture GPIO IRQs: labs/03-irq.md
+      - Lab 4 - Expose a stable ABI: labs/04-abi.md
+      - Lab 5 - Break and harden it: labs/05-hardening.md
+  - Capstone:
+      - Project brief: capstone/project.md
+      - Acceptance rubric: capstone/rubric.md
+  - Support:
+      - Troubleshooting: support/troubleshooting.md
+      - Raspberry Pi appendix: support/raspberry-pi.md
+      - Sources and attribution: support/sources.md
+

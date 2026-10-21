@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2711";
+
+	fragment@0 {
+		target-path = "/";
+
+		__overlay__ {
+			irqrec: irqrec {
+				compatible = "embeddedville,irqrec-v1";
+				event-gpios = <&gpio 17 0>;
+				debounce-us = <5000>;
+				queue-depth = <64>;
+				status = "okay";
+			};
+		};
+	};
+};

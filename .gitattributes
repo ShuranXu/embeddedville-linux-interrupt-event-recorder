@@ -1,0 +1,8 @@
+* text=auto
+*.sh text eol=lf
+lab text eol=lf
+Makefile text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.dts text eol=lf
+runtime/init text eol=lf

@@ -1,0 +1,22 @@
+#!/bin/sh
+set -eu
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+mount -t tmpfs tmpfs /run
+mount -t debugfs debugfs /sys/kernel/debug
+mount -t configfs configfs /sys/kernel/config
+hostname irqrec-guest
+mount -t 9p -o trans=virtio,version=9p2000.L workspace /workspace
+mkdir -p /root/.ssh /etc/dropbear /workspace/evidence/runtime
+cp /workspace/.lab-state/guest_authorized_keys /root/.ssh/authorized_keys
+chmod 700 /root/.ssh
+chmod 600 /root/.ssh/authorized_keys
+ip link set lo up
+ip link set eth0 up
+ip addr add 10.0.2.15/24 dev eth0
+ip route add default via 10.0.2.2 dev eth0
+/usr/sbin/dropbear -R -E -s -p 22
+echo "IRQREC_GUEST_READY $(uname -r)"
+exec setsid cttyhack sh
+

@@ -1,0 +1,19 @@
+{
+  "name": "Linux Interrupt Event Recorder",
+  "image": "ghcr.io/shuranxu/embeddedville-linux-driver-toolchain@sha256:a09add7465bf3650be6f1c68d9d66e5b6670a891ced1898d649cf0584005e13e",
+  "workspaceFolder": "/workspaces/embeddedville-linux-interrupt-event-recorder",
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "EMBEDDEDVILLE_TOOLCHAIN_DIGEST": "sha256:a09add7465bf3650be6f1c68d9d66e5b6670a891ced1898d649cf0584005e13e"
+  },
+  "forwardPorts": [2222, 8000],
+  "portsAttributes": {
+    "2222": {"label": "QEMU guest SSH - private", "onAutoForward": "silent", "visibility": "private"},
+    "8000": {"label": "Course site - private", "onAutoForward": "notify", "visibility": "private"}
+  },
+  "postCreateCommand": "./lab doctor",
+  "customizations": {
+    "vscode": {"extensions": ["ms-vscode.cpptools", "timonwong.shellcheck"]}
+  }
+}
+

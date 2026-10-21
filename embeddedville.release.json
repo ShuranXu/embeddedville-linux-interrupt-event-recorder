@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "id": "embeddedville-linux-interrupt-event-recorder",
+    "kind": "course-source",
+    "courseIds": ["linux-interrupt-event-recorder"]
+  },
+  "repository": {
+    "expectedRemote": "https://github.com/ShuranXu/embeddedville-linux-interrupt-event-recorder.git",
+    "defaultBranch": "main",
+    "immutableReleaseTagsRequired": true
+  },
+  "source": {
+    "protectedPaths": ["docs", "starter", "fixture", "runtime", "scripts", "tests/public", "tools", "userspace", "hardware", "provenance"],
+    "baselineTag": "interrupt-event-recorder-v1.0.0"
+  },
+  "validation": {
+    "commands": [
+      "python -m mkdocs build --strict",
+      "python tools/check_uapi.py",
+      "python tools/check_visual_manifest.py",
+      "python tools/check_site.py"
+    ]
+  },
+  "deployment": {
+    "managedBy": "embeddedville-learning-platform",
+    "workflow": null,
+    "productionRef": null
+  }
+}
+

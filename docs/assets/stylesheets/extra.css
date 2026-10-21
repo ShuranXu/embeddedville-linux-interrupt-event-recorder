@@ -1,0 +1,79 @@
+:root {
+  --irqrec-border: rgba(255, 255, 255, 0.16);
+  --irqrec-panel: rgba(124, 77, 255, 0.08);
+}
+
+.md-grid { max-width: 76rem; }
+.md-typeset h1 { font-weight: 760; letter-spacing: -0.03em; }
+.md-typeset h2 { margin-top: 2.25rem; }
+.md-typeset code { font-size: 0.84em; }
+.md-typeset pre > code { line-height: 1.55; }
+.md-typeset table:not([class]) { display: table; width: 100%; }
+.md-typeset img { max-height: 32rem; object-fit: contain; }
+
+.evidence {
+  border: 1px solid var(--irqrec-border);
+  border-radius: 0.6rem;
+  background: var(--irqrec-panel);
+  padding: 1rem;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+}
+
+.evidence img {
+  display: block;
+  margin: 0 auto 0.8rem;
+  background: #fff;
+  padding: 0.35rem;
+  border-radius: 0.25rem;
+}
+
+.evidence figcaption { font-size: 0.8rem; line-height: 1.45; }
+.course-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.75rem; }
+.course-meta > div { border: 1px solid var(--irqrec-border); border-radius: 0.5rem; padding: 0.8rem; }
+.course-meta strong { display: block; color: var(--md-accent-fg-color); }
+.checkpoint { border-left: 0.25rem solid var(--md-accent-fg-color); padding-left: 1rem; }
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin: 1rem 0 1.5rem;
+}
+.roadmap-step {
+  border: 1px solid var(--irqrec-border);
+  border-radius: 0.6rem;
+  background: var(--irqrec-panel);
+  padding: 1rem;
+}
+.roadmap-step h3 { margin: 0.4rem 0 0.75rem; }
+.roadmap-step p:last-child { margin-bottom: 0; }
+.roadmap-number {
+  color: var(--md-accent-fg-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.roadmap-capstone { border-color: var(--md-accent-fg-color); }
+.lab-launch { display: flex; flex-wrap: wrap; align-items: center; gap: 0.65rem; margin: 0.35rem 0 0.65rem; }
+.lab-launch .md-button { margin: 0; }
+.lab-launch-disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+  border-style: dashed !important;
+  user-select: none;
+}
+.lab-launch-note {
+  margin-top: 0 !important;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 600px) {
+  .md-typeset { font-size: 0.78rem; }
+  .evidence { padding: 0.55rem; }
+  .roadmap-grid { grid-template-columns: 1fr; }
+  .lab-launch { align-items: stretch; flex-direction: column; }
+  .lab-launch .md-button { text-align: center; }
+}
+

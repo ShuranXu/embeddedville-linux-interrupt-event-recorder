@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "policy": "No course-authored, Mermaid, redrawn, or AI-generated technical diagrams. Assets are copied unmodified from pinned upstream generated documentation.",
+  "visuals": [
+    {
+      "id": "linux-kernel-labs-pic",
+      "localPath": "docs/assets/visuals/linux-kernel-labs-pic.png",
+      "sha256": "64e2c699ca808d2b3558a61337910bb230aef02f3fd6101a14564b7f04873421",
+      "sourceProject": "Linux Kernel Labs",
+      "sourceRef": "generated-docs commit 0e83a31903025ffccda89bd9e7c871c827f8e503; teaching source a251a609fa4a8efb4fc41f9315d18c70a333aa1e",
+      "sourcePath": "lkt-docker-docs/_images/ditaa-f2e7fcf366f75599766f77babb74ffebbc7f79e3.png",
+      "sourceUrl": "https://github.com/linux-kernel-labs/linux-kernel-labs.github.io/blob/0e83a31903025ffccda89bd9e7c871c827f8e503/lkt-docker-docs/_images/ditaa-f2e7fcf366f75599766f77babb74ffebbc7f79e3.png",
+      "sourceSection": "Documentation/teaching/lectures/interrupts.rst - Hardware (PIC)",
+      "license": "GPL-2.0 (Linux Kernel Labs Linux-source repository COPYING)",
+      "modification": "none",
+      "crop": "none",
+      "caption": "Devices signal an interrupt controller; the controller signals the CPU.",
+      "alt": "Linux Kernel Labs diagram showing several device IRQ lines entering an interrupt controller, which signals the CPU through INTR, with NMI shown separately.",
+      "learnerInference": "A device driver receives a Linux IRQ abstraction above the physical interrupt-controller topology."
+    },
+    {
+      "id": "linux-kernel-labs-interrupt-phases",
+      "localPath": "docs/assets/visuals/linux-kernel-labs-interrupt-phases.png",
+      "sha256": "a55137b285d45a65933de9cf6288806d92dc3eea4ac4b6daea8181b5ffd9912b",
+      "sourceProject": "Linux Kernel Labs",
+      "sourceRef": "generated-docs commit 0e83a31903025ffccda89bd9e7c871c827f8e503; teaching source a251a609fa4a8efb4fc41f9315d18c70a333aa1e",
+      "sourcePath": "lkt-docker-docs/_images/ditaa-5a402cd7f81a0ddbe1a435bc3ab7949828f731f0.png",
+      "sourceUrl": "https://github.com/linux-kernel-labs/linux-kernel-labs.github.io/blob/0e83a31903025ffccda89bd9e7c871c827f8e503/lkt-docker-docs/_images/ditaa-5a402cd7f81a0ddbe1a435bc3ab7949828f731f0.png",
+      "sourceSection": "Documentation/teaching/lectures/interrupts.rst - Interrupt handling in Linux",
+      "license": "GPL-2.0 (Linux Kernel Labs Linux-source repository COPYING)",
+      "modification": "none",
+      "crop": "none",
+      "caption": "Critical, immediate, and deferred interrupt-processing phases.",
+      "alt": "Linux Kernel Labs diagram dividing interrupt processing into critical, immediate, and deferred phases, with IRQ acknowledgement and later deferred execution.",
+      "learnerInference": "Substantial work should move out of the most constrained interrupt phase."
+    },
+    {
+      "id": "linux-kernel-labs-context-nesting",
+      "localPath": "docs/assets/visuals/linux-kernel-labs-context-nesting.png",
+      "sha256": "94b25d083f54c0a27ce64c82d3c44277a414dd60a210517e19f3a2cfc31e1f37",
+      "sourceProject": "Linux Kernel Labs",
+      "sourceRef": "generated-docs commit 0e83a31903025ffccda89bd9e7c871c827f8e503; teaching source a251a609fa4a8efb4fc41f9315d18c70a333aa1e",
+      "sourcePath": "refs/heads/master/_images/ditaa-2e49ca6ac606dab4b2b53231cfbe85ff06312d36.png",
+      "sourceUrl": "https://github.com/linux-kernel-labs/linux-kernel-labs.github.io/blob/0e83a31903025ffccda89bd9e7c871c827f8e503/refs/heads/master/_images/ditaa-2e49ca6ac606dab4b2b53231cfbe85ff06312d36.png",
+      "sourceSection": "Documentation/teaching/lectures/interrupts.rst - Interrupt/Exception nesting",
+      "license": "GPL-2.0 (Linux Kernel Labs Linux-source repository COPYING)",
+      "modification": "none",
+      "crop": "none",
+      "caption": "Syscall, exception, and IRQ entries cross process and interrupt contexts.",
+      "alt": "Linux Kernel Labs execution-context diagram showing syscalls, exceptions, IRQ entries, and returns between user mode and kernel mode.",
+      "learnerInference": "Driver state is touched asynchronously from process and IRQ-related contexts and requires explicit synchronization."
+    }
+  ]
+}
+
