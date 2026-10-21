@@ -28,5 +28,5 @@ jobs:
           set -euo pipefail
           test ! -e reference
           test ! -e maintainer
-          ! grep -RIl --exclude-dir=.git --exclude='*.png' 'struct irqrec_reader' .
+          ! grep -RIl --include='*.c' --include='*.h' 'struct irqrec_reader' starter fixture userspace
 

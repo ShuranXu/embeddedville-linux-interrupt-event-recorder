@@ -1,6 +1,6 @@
 site_name: Linux Interrupt Driver Project
 site_description: Build a production-style GPIO interrupt event recorder in Linux 6.18 under QEMU.
-site_url: https://shuranxu.github.io/embeddedville-linux-interrupt-event-recorder/
+site_url: https://embeddedville.com/courses/linux-interrupt-event-recorder/guide/
 repo_url: https://github.com/ShuranXu/embeddedville-linux-interrupt-event-recorder
 repo_name: ShuranXu/embeddedville-linux-interrupt-event-recorder
 theme:

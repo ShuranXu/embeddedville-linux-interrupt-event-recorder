@@ -4,9 +4,11 @@ from __future__ import annotations
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
+SITE_PREFIX = urlsplit(yaml.safe_load((ROOT / "mkdocs.yml").read_text())["site_url"]).path.rstrip("/") + "/"
 
 
 class References(HTMLParser):
@@ -33,7 +35,7 @@ def target_path(page: Path, reference: str) -> Path | None:
     raw = unquote(parsed.path)
     if not raw:
         return page
-    site_prefix = f"/{ROOT.name}/"
+    site_prefix = SITE_PREFIX
     if raw == site_prefix[:-1]:
         raw = "/"
     elif raw.startswith(site_prefix):
