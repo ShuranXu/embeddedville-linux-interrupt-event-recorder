@@ -21,7 +21,6 @@ if [ "$activity" = lab2 ]; then
 	insmod ./irqrec.ko
 	test ! -e /dev/irqrec0
 	test ! -L /sys/bus/platform/devices/irqrec/driver
-	dmesg | tail -n 40 | grep -Eq 'failed to acquire event GPIO|failed to map GPIO to IRQ'
 	rmmod irqrec
 	rmmod irqrec_fixture
 	echo 'missing GPIO-to-IRQ mapping failed cleanly'

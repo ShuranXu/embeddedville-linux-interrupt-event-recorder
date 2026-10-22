@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
+#include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,7 +41,7 @@ static void write_pull(const char *value)
 		fail("write gpio-sim pull");
 }
 
-static void trigger_after_delay(const char *pull)
+static pid_t trigger_after_delay(const char *pull)
 {
 	pid_t child = fork();
 
@@ -53,12 +54,58 @@ static void trigger_after_delay(const char *pull)
 		write_pull(pull);
 		_exit(EXIT_SUCCESS);
 	}
+	return child;
 }
 
-static struct irqrec_event_v1 read_event(int fd)
+static struct irqrec_event_v1 read_event(int fd, pid_t child)
 {
 	struct irqrec_event_v1 event;
+	struct pollfd pfd = { .fd = fd, .events = POLLIN };
+	int child_status = 0;
+	int child_reaped = 0;
 	ssize_t bytes;
+	int elapsed_ms = 0;
+
+	while (elapsed_ms < 5000) {
+		pid_t result;
+		int ready;
+
+		if (!child_reaped) {
+			result = waitpid(child, &child_status, WNOHANG);
+			if (result < 0)
+				fail("waitpid");
+			if (result == child) {
+				child_reaped = 1;
+				if (!WIFEXITED(child_status) || WEXITSTATUS(child_status) != 0) {
+					errno = EIO;
+					fail("edge stimulus");
+				}
+			}
+		}
+		ready = poll(&pfd, 1, 50);
+		if (ready < 0) {
+			if (errno == EINTR)
+				continue;
+			fail("poll event");
+		}
+		if (ready > 0 && (pfd.revents & POLLIN))
+			break;
+		if (ready > 0 && (pfd.revents & (POLLERR | POLLHUP | POLLNVAL))) {
+			errno = EIO;
+			fail("poll event");
+		}
+		elapsed_ms += 50;
+	}
+	if (!(pfd.revents & POLLIN)) {
+		errno = ETIMEDOUT;
+		fail("poll event");
+	}
+	if (!child_reaped && waitpid(child, &child_status, 0) < 0)
+		fail("waitpid");
+	if (!child_reaped && (!WIFEXITED(child_status) || WEXITSTATUS(child_status) != 0)) {
+		errno = EIO;
+		fail("edge stimulus");
+	}
 
 	do {
 		bytes = read(fd, &event, sizeof(event));
@@ -82,11 +129,9 @@ int main(void)
 	if (ioctl(fd, IRQREC_IOC_GET_INFO, &info))
 		fail("GET_INFO");
 
-	trigger_after_delay("pull-up");
-	rising = read_event(fd);
+	rising = read_event(fd, trigger_after_delay("pull-up"));
 	usleep(info.debounce_us + 1000);
-	trigger_after_delay("pull-down");
-	falling = read_event(fd);
+	falling = read_event(fd, trigger_after_delay("pull-down"));
 
 	if (rising.value != 1 || rising.edge != IRQREC_EDGE_RISING ||
 	    falling.value != 0 || falling.edge != IRQREC_EDGE_FALLING ||
