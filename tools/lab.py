@@ -16,7 +16,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = json.loads((ROOT / "release-lock.json").read_text())
 STATE = ROOT / ".lab-state"
-PORT = str(LOCK["runtime"]["sshPort"])
+PORT = os.environ.get("IRQREC_GUEST_SSH_PORT", str(LOCK["runtime"]["sshPort"]))
 TOOLCHAIN_ROOT = Path(os.environ.get("IRQREC_TOOLCHAIN_ROOT", "/opt/embeddedville"))
 QEMU_DATA_ROOT = Path(os.environ.get(
     "IRQREC_QEMU_DATA_DIR",

@@ -121,7 +121,7 @@ int main(void)
 	struct irqrec_stats_v1 stats;
 	struct irqrec_event_v1 rising;
 	struct irqrec_event_v1 falling;
-	int fd = open(DEVICE, O_RDONLY | O_CLOEXEC);
+	int fd = open(DEVICE, O_RDONLY | O_CLOEXEC | O_NONBLOCK);
 
 	_Static_assert(sizeof(struct irqrec_event_v1) == 32, "event ABI changed");
 	if (fd < 0)
@@ -141,7 +141,8 @@ int main(void)
 		return EXIT_FAILURE;
 	}
 
-	write_pull("pull-up");
+	usleep(info.debounce_us + 1000);
+	(void)read_event(fd, trigger_after_delay("pull-up"));
 	write_pull("pull-down");
 	usleep(info.debounce_us + 1000);
 	if (ioctl(fd, IRQREC_IOC_GET_STATS, &stats))
