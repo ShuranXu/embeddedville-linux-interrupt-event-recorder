@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
-#include <poll.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,7 +60,6 @@ static pid_t trigger_after_delay(const char *pull)
 static struct irqrec_event_v1 read_event(int fd, pid_t child)
 {
 	struct irqrec_event_v1 event;
-	struct pollfd pfd = { .fd = fd, .events = POLLIN };
 	int child_status = 0;
 	int child_reaped = 0;
 	ssize_t bytes;
@@ -69,7 +67,7 @@ static struct irqrec_event_v1 read_event(int fd, pid_t child)
 
 	while (elapsed_ms < 5000) {
 		pid_t result;
-		int ready;
+		struct timespec retry_delay = { .tv_nsec = 50 * 1000 * 1000 };
 
 		if (!child_reaped) {
 			result = waitpid(child, &child_status, WNOHANG);
@@ -83,23 +81,17 @@ static struct irqrec_event_v1 read_event(int fd, pid_t child)
 				}
 			}
 		}
-		ready = poll(&pfd, 1, 50);
-		if (ready < 0) {
-			if (errno == EINTR)
-				continue;
-			fail("poll event");
-		}
-		if (ready > 0 && (pfd.revents & POLLIN))
+		bytes = read(fd, &event, sizeof(event));
+		if (bytes == (ssize_t)sizeof(event))
 			break;
-		if (ready > 0 && (pfd.revents & (POLLERR | POLLHUP | POLLNVAL))) {
-			errno = EIO;
-			fail("poll event");
-		}
+		if (bytes >= 0 || (errno != EAGAIN && errno != EINTR))
+			fail("read event");
+		nanosleep(&retry_delay, NULL);
 		elapsed_ms += 50;
 	}
-	if (!(pfd.revents & POLLIN)) {
+	if (bytes != (ssize_t)sizeof(event)) {
 		errno = ETIMEDOUT;
-		fail("poll event");
+		fail("read event");
 	}
 	if (!child_reaped && waitpid(child, &child_status, 0) < 0)
 		fail("waitpid");
@@ -108,11 +100,6 @@ static struct irqrec_event_v1 read_event(int fd, pid_t child)
 		fail("edge stimulus");
 	}
 
-	do {
-		bytes = read(fd, &event, sizeof(event));
-	} while (bytes < 0 && errno == EINTR);
-	if (bytes != (ssize_t)sizeof(event))
-		fail("read event");
 	return event;
 }
 
