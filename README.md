@@ -5,7 +5,7 @@ Linux 6.18.57/QEMU 11.1.2 environment. Five guided labs extend one driver from
 platform binding through IRQ handling, a versioned userspace ABI, independent
 per-open queues, and removal-safe teardown.
 
-[Open or resume the course workspace in GitHub Codespaces](https://codespaces.new/ShuranXu/embeddedville-linux-interrupt-event-recorder/tree/interrupt-event-recorder-v1.0.1?quickstart=1)
+[Open or resume the course workspace in GitHub Codespaces](https://codespaces.new/ShuranXu/embeddedville-linux-interrupt-event-recorder/tree/interrupt-event-recorder-v1.0.2?quickstart=1)
 
 ## Start the project
 

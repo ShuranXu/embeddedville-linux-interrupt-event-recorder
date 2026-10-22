@@ -6,6 +6,9 @@
 #include <linux/property.h>
 
 static struct platform_device *irqrec_pdev;
+static bool omit_gpio_mapping;
+module_param(omit_gpio_mapping, bool, 0444);
+MODULE_PARM_DESC(omit_gpio_mapping, "register the platform device without its GPIO lookup for negative-path tests");
 
 static const struct property_entry irqrec_properties[] = {
 	PROPERTY_ENTRY_U32("debounce-us", 50000),
@@ -29,10 +32,12 @@ static int __init irqrec_fixture_init(void)
 		.properties = irqrec_properties,
 	};
 
-	gpiod_add_lookup_table(&irqrec_gpio_table);
+	if (!omit_gpio_mapping)
+		gpiod_add_lookup_table(&irqrec_gpio_table);
 	irqrec_pdev = platform_device_register_full(&device_info);
 	if (IS_ERR(irqrec_pdev)) {
-		gpiod_remove_lookup_table(&irqrec_gpio_table);
+		if (!omit_gpio_mapping)
+			gpiod_remove_lookup_table(&irqrec_gpio_table);
 		return PTR_ERR(irqrec_pdev);
 	}
 	return 0;
@@ -41,7 +46,8 @@ static int __init irqrec_fixture_init(void)
 static void __exit irqrec_fixture_exit(void)
 {
 	platform_device_unregister(irqrec_pdev);
-	gpiod_remove_lookup_table(&irqrec_gpio_table);
+	if (!omit_gpio_mapping)
+		gpiod_remove_lookup_table(&irqrec_gpio_table);
 }
 
 module_init(irqrec_fixture_init);
