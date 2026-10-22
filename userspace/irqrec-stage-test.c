@@ -16,10 +16,18 @@
 #define DEVICE "/dev/irqrec0"
 #define SIM_PATH_FILE "/run/irqrec-sim-value"
 
+static volatile sig_atomic_t event_read_timed_out;
+
 static void fail(const char *message)
 {
 	perror(message);
 	exit(EXIT_FAILURE);
+}
+
+static void event_read_timeout(int signal_number)
+{
+	(void)signal_number;
+	event_read_timed_out = 1;
 }
 
 static void write_pull(const char *value)
@@ -60,12 +68,19 @@ static pid_t trigger_after_delay(const char *pull)
 static struct irqrec_event_v1 read_event(int fd, pid_t child)
 {
 	struct irqrec_event_v1 event;
+	struct sigaction timeout_action = { .sa_handler = event_read_timeout };
+	struct sigaction previous_action;
 	int child_status = 0;
 	int child_reaped = 0;
-	ssize_t bytes;
+	ssize_t bytes = -1;
 	int elapsed_ms = 0;
 
-	while (elapsed_ms < 5000) {
+	sigemptyset(&timeout_action.sa_mask);
+	if (sigaction(SIGALRM, &timeout_action, &previous_action))
+		fail("install read timeout");
+	event_read_timed_out = 0;
+	alarm(5);
+	while (!event_read_timed_out && elapsed_ms < 5000) {
 		pid_t result;
 		struct timespec retry_delay = { .tv_nsec = 50 * 1000 * 1000 };
 
@@ -86,9 +101,14 @@ static struct irqrec_event_v1 read_event(int fd, pid_t child)
 			break;
 		if (bytes >= 0 || (errno != EAGAIN && errno != EINTR))
 			fail("read event");
+		if (event_read_timed_out)
+			break;
 		nanosleep(&retry_delay, NULL);
 		elapsed_ms += 50;
 	}
+	alarm(0);
+	if (sigaction(SIGALRM, &previous_action, NULL))
+		fail("restore read timeout");
 	if (bytes != (ssize_t)sizeof(event)) {
 		errno = ETIMEDOUT;
 		fail("read event");
