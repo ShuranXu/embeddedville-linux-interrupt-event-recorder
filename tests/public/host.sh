@@ -20,4 +20,3 @@ python3 "$root/tools/check_uapi.py"
 python3 "$root/tools/check_visual_manifest.py"
 python3 "$root/tools/check_site.py"
 echo "host structural, UAPI, and visual provenance checks passed for $activity"
-

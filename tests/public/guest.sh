@@ -89,4 +89,3 @@ fi
 
 printf '%s\n' "$log" | tail -n 80 > evidence/runtime/dmesg.txt
 echo 'guest runtime and removal checks passed'
-
