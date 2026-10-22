@@ -118,6 +118,7 @@ static struct irqrec_event_v1 read_event(int fd, pid_t child)
 int main(void)
 {
 	struct irqrec_info_v1 info;
+	struct irqrec_stats_v1 before_debounce;
 	struct irqrec_stats_v1 stats;
 	struct irqrec_event_v1 rising;
 	struct irqrec_event_v1 falling;
@@ -143,14 +144,28 @@ int main(void)
 
 	usleep(info.debounce_us + 1000);
 	(void)read_event(fd, trigger_after_delay("pull-up"));
+	if (ioctl(fd, IRQREC_IOC_GET_STATS, &before_debounce))
+		fail("GET_STATS before debounce");
 	write_pull("pull-down");
 	usleep(info.debounce_us + 1000);
 	if (ioctl(fd, IRQREC_IOC_GET_STATS, &stats))
 		fail("GET_STATS");
-	if (stats.produced < 2 ||
-	    ((info.features & IRQREC_FEATURE_SW_DEBOUNCE) && !stats.debounced)) {
+	if (stats.produced < 3 ||
+	    ((info.features & IRQREC_FEATURE_SW_DEBOUNCE) &&
+	     (stats.debounced <= before_debounce.debounced ||
+	      stats.produced != before_debounce.produced))) {
 		fprintf(stderr, "event or debounce counters did not advance\n");
 		return EXIT_FAILURE;
+	}
+	if (info.features & IRQREC_FEATURE_SW_DEBOUNCE) {
+		struct pollfd pfd = { .fd = fd, .events = POLLIN };
+
+		if (poll(&pfd, 1, 0) < 0)
+			fail("poll debounced event");
+		if (pfd.revents & POLLIN) {
+			fprintf(stderr, "debounced edge was incorrectly delivered\n");
+			return EXIT_FAILURE;
+		}
 	}
 
 	close(fd);
