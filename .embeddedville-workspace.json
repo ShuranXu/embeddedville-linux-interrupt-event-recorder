@@ -3,7 +3,7 @@
   "courseId": "linux-interrupt-event-recorder",
   "contractVersion": "2026.10-linux-interrupt-event-recorder-v1",
   "repository": "ShuranXu/embeddedville-linux-interrupt-event-recorder",
-  "starterVersion": "interrupt-event-recorder-v1.0.0",
+  "starterVersion": "interrupt-event-recorder-v1.0.2",
   "activities": [
     "irqrec-lab-target",
     "irqrec-lab-platform",

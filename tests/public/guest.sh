@@ -16,6 +16,16 @@ case "$activity" in
   *) echo "unknown activity: $activity" >&2; exit 2 ;;
 esac
 
+if [ "$activity" = lab2 ]; then
+	insmod ./irqrec_fixture.ko omit_gpio_mapping=1
+	insmod ./irqrec.ko
+	test ! -e /dev/irqrec0
+	test ! -L /sys/bus/platform/devices/irqrec/driver
+	rmmod irqrec
+	rmmod irqrec_fixture
+	echo 'missing GPIO-to-IRQ mapping failed cleanly'
+fi
+
 insmod ./irqrec_fixture.ko
 insmod ./irqrec.ko
 test -c /dev/irqrec0
@@ -23,7 +33,7 @@ grep -q irqrec /proc/interrupts
 
 case "$activity" in
   lab2) test -L /sys/bus/platform/devices/irqrec/driver ;;
-  lab3) grep -q irqrec /proc/interrupts; ./build/irqrec-test > evidence/runtime/public-test.txt; cat evidence/runtime/public-test.txt ;;
+  lab3) grep -q irqrec /proc/interrupts; ./build/irqrec-stage-test > evidence/runtime/public-test.txt; cat evidence/runtime/public-test.txt ;;
   lab4|lab5|capstone|all) ./build/irqrec-test > evidence/runtime/public-test.txt; cat evidence/runtime/public-test.txt ;;
 esac
 
@@ -79,4 +89,3 @@ fi
 
 printf '%s\n' "$log" | tail -n 80 > evidence/runtime/dmesg.txt
 echo 'guest runtime and removal checks passed'
-

@@ -56,7 +56,7 @@ public scenario.
 | [Lab 5 - Harden the lifecycle](../labs/05-hardening.md) | `./lab run lab5` | Removal behavior and clean lifecycle stress |
 
 !!! info "Open the hosted workspace"
-    [Open or resume the pinned Codespace](https://codespaces.new/ShuranXu/embeddedville-linux-interrupt-event-recorder/tree/interrupt-event-recorder-v1.0.1?quickstart=1){ .md-button .md-button--primary }
+    [Open or resume the pinned Codespace](https://codespaces.new/ShuranXu/embeddedville-linux-interrupt-event-recorder/tree/interrupt-event-recorder-v1.0.2?quickstart=1){ .md-button .md-button--primary }
 
     The link selects the immutable course tag and uses the repository's pinned
     dev-container image. Save work under `/workspaces`, commit or export work

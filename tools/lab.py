@@ -16,13 +16,20 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = json.loads((ROOT / "release-lock.json").read_text())
 STATE = ROOT / ".lab-state"
-PORT = str(LOCK["runtime"]["sshPort"])
+PORT = os.environ.get("IRQREC_GUEST_SSH_PORT", str(LOCK["runtime"]["sshPort"]))
 TOOLCHAIN_ROOT = Path(os.environ.get("IRQREC_TOOLCHAIN_ROOT", "/opt/embeddedville"))
 QEMU_DATA_ROOT = Path(os.environ.get(
     "IRQREC_QEMU_DATA_DIR",
     str(TOOLCHAIN_ROOT.parent.parent / "usr/local/share/qemu"),
 ))
-ACTIVITIES = {"lab1", "lab2", "lab3", "lab4", "lab5", "capstone", "all"}
+ACTIVITY_ALIASES = {
+    "lab1": "lab1", "irqrec-lab-target": "lab1",
+    "lab2": "lab2", "irqrec-lab-platform": "lab2",
+    "lab3": "lab3", "irqrec-lab-irq": "lab3",
+    "lab4": "lab4", "irqrec-lab-abi": "lab4",
+    "lab5": "lab5", "irqrec-lab-hardening": "lab5",
+    "capstone": "capstone", "irqrec-capstone": "capstone", "all": "all",
+}
 
 def run(*command: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     print("+", " ".join(command), flush=True)
@@ -67,15 +74,20 @@ def guest(*command: str) -> None:
         "root@127.0.0.1", *command)
 
 def run_lab(args: argparse.Namespace) -> None:
-    activity = getattr(args, "activity", None) or "all"
-    if activity not in ACTIVITIES:
-        raise SystemExit("unknown activity; use lab1, lab2, lab3, lab4, lab5, capstone, or all")
+    requested = getattr(args, "activity", None) or "all"
+    activity = ACTIVITY_ALIASES.get(requested)
+    if activity is None:
+        raise SystemExit("unknown activity; use an irqrec-lab-* ID, lab1 through lab5, irqrec-capstone, capstone, or all")
     build(args)
     boot(args)
     guest("/bin/sh", "/workspace/tests/public/guest.sh", activity)
 
 def test(args: argparse.Namespace) -> None:
-    run("bash", "tests/public/host.sh")
+    requested = getattr(args, "activity", None) or "all"
+    activity = ACTIVITY_ALIASES.get(requested)
+    if activity is None:
+        raise SystemExit("unknown activity; use an irqrec-lab-* ID, lab1 through lab5, irqrec-capstone, capstone, or all")
+    run("bash", "tests/public/host.sh", activity)
     run_lab(args)
     print("test: public host and QEMU guest acceptance checks passed")
 
@@ -144,8 +156,8 @@ def submit(args: argparse.Namespace) -> None:
         "courseId": "linux-interrupt-event-recorder",
         "activityId": "irqrec-capstone",
         "repository": "ShuranXu/embeddedville-linux-interrupt-event-recorder",
-        "starterVersion": "interrupt-event-recorder-v1.0.1",
-        "baseRef": "interrupt-event-recorder-v1.0.1",
+        "starterVersion": "interrupt-event-recorder-v1.0.2",
+        "baseRef": "interrupt-event-recorder-v1.0.2",
         "headCommit": None,
         "dirty": True,
         "manifestSha256": manifest_digest,

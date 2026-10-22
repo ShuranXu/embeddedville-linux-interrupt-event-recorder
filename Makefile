@@ -20,6 +20,7 @@ modules:
 userspace:
 	mkdir -p build
 	$(CC) -std=c11 -D_GNU_SOURCE -O2 -Wall -Wextra -Werror -static -Istarter/include userspace/irqrec-read.c -o build/irqrec-read
+	$(CC) -std=c11 -D_GNU_SOURCE -O2 -Wall -Wextra -Werror -static -Istarter/include userspace/irqrec-stage-test.c -o build/irqrec-stage-test
 	$(CC) -std=c11 -D_GNU_SOURCE -O2 -Wall -Wextra -Werror -static -Istarter/include userspace/irqrec-test.c -o build/irqrec-test
 
 clean:
