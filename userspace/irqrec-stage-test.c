@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <poll.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -115,6 +116,34 @@ static struct irqrec_event_v1 read_event(int fd, pid_t child)
 	return event;
 }
 
+static void assert_no_event(int fd)
+{
+	pid_t child = fork();
+	int status;
+
+	if (child < 0)
+		fail("fork no-event check");
+	if (child == 0) {
+		struct irqrec_event_v1 event;
+		ssize_t bytes;
+
+		alarm(1);
+		bytes = read(fd, &event, sizeof(event));
+		if (bytes < 0 && errno == EAGAIN)
+			_exit(EXIT_SUCCESS);
+		if (bytes == (ssize_t)sizeof(event))
+			_exit(2);
+		_exit(3);
+	}
+	if (waitpid(child, &status, 0) < 0)
+		fail("waitpid no-event check");
+	if ((WIFEXITED(status) && WEXITSTATUS(status) == 0) ||
+	    (WIFSIGNALED(status) && WTERMSIG(status) == SIGALRM))
+		return;
+	fprintf(stderr, "debounced edge was incorrectly delivered\n");
+	exit(EXIT_FAILURE);
+}
+
 int main(void)
 {
 	struct irqrec_info_v1 info;
@@ -157,16 +186,8 @@ int main(void)
 		fprintf(stderr, "event or debounce counters did not advance\n");
 		return EXIT_FAILURE;
 	}
-	if (info.features & IRQREC_FEATURE_SW_DEBOUNCE) {
-		struct pollfd pfd = { .fd = fd, .events = POLLIN };
-
-		if (poll(&pfd, 1, 0) < 0)
-			fail("poll debounced event");
-		if (pfd.revents & POLLIN) {
-			fprintf(stderr, "debounced edge was incorrectly delivered\n");
-			return EXIT_FAILURE;
-		}
-	}
+	if (info.features & IRQREC_FEATURE_SW_DEBOUNCE)
+		assert_no_event(fd);
 
 	close(fd);
 	while (waitpid(-1, NULL, 0) > 0) { }
